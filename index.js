@@ -21,7 +21,6 @@ server.get('/', (req, res) => {
 })
 
 // GET /users
-
 server.get('/users', (req, res) => {
 	db.find()
 	.then (users => {
@@ -33,7 +32,6 @@ server.get('/users', (req, res) => {
 		})
 	})
 })
-
 
 // POST /users
 server.post('/users', (req, res) => {
@@ -51,7 +49,6 @@ server.post('/users', (req, res) => {
 })
 
 // GET /users/:id
-
 server.get('/users/:id', (req, res) => {
 	const { id } = req.params
 	db.findById(id)
@@ -72,6 +69,49 @@ server.get('/users/:id', (req, res) => {
 	})
 })
 
+// DELETE users/:id
+server.delete('/users/:id', (req, res) => {
+	const { id } = req.params
+	
+	db.remove(id)
+	.then(user => {
+		if (user) {
+			res.json(user)
+		} else {
+			res.status(404).json({
+				message: "The user with the specified ID does not exist."
+			})
+		}
+	})
+	.catch(err => {
+		res.status(500).json({
+			err: err,
+			message: "The user could not be removed"
+		})
+	})
+})
 
+// PUT users/:id
+server.put('/users/:id', (req, res) => {
+	const { id } = req.params
+	const changed = req.body
+
+	db.update(id, changed)
+	.then(updated => {
+		if (updated) {
+			res.json(updated)
+		} else {
+			res.status(404).json({
+				message: "The user with the specified ID does not exist."
+			})
+		}
+	})
+	.catch(err => {
+		res.status(500).json({
+			err: err,
+			message: "The user information could not be modified."
+		})
+	})
+})
 
 server.listen(4000, () => console.log('API running on port 4000'))
